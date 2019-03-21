@@ -10,19 +10,21 @@ extern "C"
 #include "freertos/semphr.h"
 #include "freertos/event_groups.h"
 #include "esp_log.h"
+#include "mbedtls/aes.h"
 
-/*
-** The provided mqtt-broker URL, username and password are just for test purposes  
-**
-*/
-#define BROKER_URI "mqtts://37.59.96.8:1883"
-#define BROKER_USERNAME "ridaidil"
-#define BROKER_PASSWORD "justfortest"
+#define E2EE_BIT BIT1
 
-    TaskHandle_t MqttHandle;
+    EventGroupHandle_t e2ee_event_group;
+
+    mbedtls_aes_context aes_ctx;
+    void
+    endToEndEnc();
 
     void
-    mqtt_app_start();
+    AESEncrypt();
+
+    void
+    AESDecrypt();
 
 #ifdef __cplusplus
 }

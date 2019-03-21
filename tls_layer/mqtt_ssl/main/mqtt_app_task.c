@@ -56,6 +56,10 @@ void app_main()
     ret = taskWifi();
     ESP_ERROR_CHECK(ret);
 
+    ESP_LOGI(TAG, "End To End Enc");
+    ret = taskEndToEndEnc();
+    ESP_ERROR_CHECK(ret);
+
     ESP_LOGI(TAG, "Mqtt client");
     ret = mqttTaskStart();
     ESP_ERROR_CHECK(ret);

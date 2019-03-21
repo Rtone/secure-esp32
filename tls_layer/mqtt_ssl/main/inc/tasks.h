@@ -10,6 +10,7 @@ extern "C"
 #endif
 
     esp_err_t taskWifi(void);
+    esp_err_t taskEndToEndEnc(void);
     esp_err_t mqttTaskStart(void);
 
 #ifdef __cplusplus

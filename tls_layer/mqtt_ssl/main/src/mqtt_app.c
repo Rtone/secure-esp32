@@ -19,19 +19,13 @@
 
 #include "esp_log.h"
 #include "mqtt_client.h"
+#include "mbedtls/aes.h"
 
 #include "wifi.h"
+#include "e2ee.h"
 #include "mqtt_app.h"
 
-static const char *TAG = "MQTTS_EXAMPLE";
-
-/*
-** The provided mqtt-broker URL, username and password are just for test purposes  
-**
-*/
-#define BROKER_URI "mqtts://37.59.96.8:1883"
-#define BROKER_USERNAME "ridaidil"
-#define BROKER_PASSWORD "justfortest"
+static const char *TAG = "MQTTS_APP";
 
 #if CONFIG_BROKER_CERTIFICATE_OVERRIDDEN == 1
 static const uint8_t ca_cert_pem_start[] = "-----BEGIN CERTIFICATE-----\n" CONFIG_BROKER_CERTIFICATE_OVERRIDE "\n-----END CERTIFICATE-----";
@@ -44,6 +38,9 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
 {
     esp_mqtt_client_handle_t client = event->client;
     int msg_id;
+    unsigned char test1[16];
+    unsigned char test2[16];
+
     // your_context_t *context = event->context;
     configASSERT(MqttHandle != NULL);
 
@@ -79,6 +76,15 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
         ESP_LOGI(TAG, "MQTT_EVENT_DATA");
         printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
         printf("DATA=%.*s\r\n", event->data_len, event->data);
+
+        memset(test1, 0, event->data_len);
+        memset(test2, 0, event->data_len);
+        AESEncrypt(event->data, event->data_len, test1);
+        AESDecrypt(test1, sizeof(test1), test2);
+
+        printf("DATAEEEEEENC=%s\r\n", test1);
+        printf("DATADDDDDDCR=%s\r\n", test2);
+
         break;
     case MQTT_EVENT_ERROR:
         ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
@@ -103,6 +109,9 @@ void mqtt_app_start(void)
     ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
 
     xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT,
+                        false, true, portMAX_DELAY);
+
+    xEventGroupWaitBits(e2ee_event_group, E2EE_BIT,
                         false, true, portMAX_DELAY);
 
     esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt_cfg);

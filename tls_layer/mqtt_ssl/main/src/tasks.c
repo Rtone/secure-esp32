@@ -51,13 +51,13 @@ esp_err_t mqttTaskStart(void)
 
     if (retTaskMqttClient == pdPASS)
     {
-        ESP_LOGI("Task", "Https Req task created");
+        ESP_LOGI("Task", "Mqtt app task created");
         // vTaskDelete(wifiHandle);
         return ESP_OK;
     }
     else
     {
-        ESP_LOGI("Task", "Https Req task failed");
+        ESP_LOGI("Task", "Mqtt app task failed");
         return ESP_FAIL;
     }
 }

@@ -42,11 +42,15 @@ static void _initAES256()
     mbedtls_aes_setkey_dec(&aes_ctx, key, 256);
 }
 
-void AESEncrypt(uint8_t *input_data, uint32_t input_length, char *buffer)
+void AESEncrypt(uint8_t *input_data, uint32_t input_length, char buffer[32])
 {
     unsigned char input[16];
     unsigned char output[16];
-    unsigned char cipher_text[input_length];
+    char cipher_text[input_length];
+
+    memset(cipher_text, 0, 32);
+    memset(output, 0, 16);
+    memset(buffer, 0, 32);
 
     if (input_length <= 16)
     {
@@ -59,7 +63,7 @@ void AESEncrypt(uint8_t *input_data, uint32_t input_length, char *buffer)
         for (int i = 0; i < 16; i++)
         {
             cipher_text[i] = output[i];
-            buffer[i] = output[i];
+            buffer[i] = cipher_text[i];
         }
     }
     else
@@ -68,24 +72,33 @@ void AESEncrypt(uint8_t *input_data, uint32_t input_length, char *buffer)
         {
             for (int i = 0; i < 16; i++)
             {
-                input[i] = input_data[i + offset];
+                if ((offset + i) < input_length)
+                {
+                    input[i] = input_data[i + offset];
+                }
+                else
+                {
+                    input[i] = 0x0b;
+                }
             }
             mbedtls_aes_crypt_ecb(&aes_ctx, MBEDTLS_AES_ENCRYPT, input, output);
             printf("EncryptedDATA=%.*s\r\n", 16, output);
 
             for (int j = 0; j < 16; j++)
             {
-                if ((offset + j) < input_length)
-                {
-                    cipher_text[j + offset] = output[j];
-                }
+                // if ((offset + j) < input_length)
+                // {
+                cipher_text[j + offset] = output[j];
+                buffer[j + offset] = output[j];
+                // }
             }
         }
-        printf("All Cipher Text %s", cipher_text);
+        printf("All Cipher Text %.*s\r\n", input_length, cipher_text);
+        AESDecrypt(cipher_text, 32);
     }
 }
 
-void AESDecrypt(uint8_t *input_data, uint32_t input_length, char *buffer)
+void AESDecrypt(uint8_t *input_data, uint32_t input_length)
 {
     unsigned char input[16];
     unsigned char output[16];
@@ -102,7 +115,6 @@ void AESDecrypt(uint8_t *input_data, uint32_t input_length, char *buffer)
         for (int i = 0; i < 16; i++)
         {
             plain_text[i] = output[i];
-            buffer[i] = plain_text[i];
         }
     }
     else
@@ -111,7 +123,14 @@ void AESDecrypt(uint8_t *input_data, uint32_t input_length, char *buffer)
         {
             for (int i = 0; i < 16; i++)
             {
-                input[i] = input_data[i + offset];
+                if ((offset + i) < input_length)
+                {
+                    input[i] = input_data[i + offset];
+                }
+                else
+                {
+                    input[i] = 0x0b;
+                }
             }
 
             mbedtls_aes_crypt_ecb(&aes_ctx, MBEDTLS_AES_DECRYPT, input, output);
@@ -126,7 +145,7 @@ void AESDecrypt(uint8_t *input_data, uint32_t input_length, char *buffer)
             }
         }
 
-        printf("All Plain text %s", plain_text);
+        printf("All Plain text %.*s\n", input_length, plain_text);
     }
 }
 

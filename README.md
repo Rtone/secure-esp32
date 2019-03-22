@@ -14,7 +14,7 @@ All developments have been conducted on an ESP32 ESPRESSIF development kit platf
 
 The project may need modifications to work with other versions or other boards.
 
-[![asciicast](https://asciinema.org/a/fyS3QZIaXW6FmoBLIKPjFWlm7.svg)](https://asciinema.org/a/TUVugHeSFMdA6UpvxQLRJh28d)
+[![asciicast](https://asciinema.org/a/TUVugHeSFMdA6UpvxQLRJh28d.svg)](https://asciinema.org/a/TUVugHeSFMdA6UpvxQLRJh28d)
 
 ## Supported Features 
 

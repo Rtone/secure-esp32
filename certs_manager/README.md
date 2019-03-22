@@ -62,6 +62,8 @@ To sign the **root CSR** with the **root CA** private key:
 $ source certs_manager.sh --root-ca --ca
 ```
 
+[![asciicast](https://asciinema.org/a/fyS3QZIaXW6FmoBLIKPjFWlm7.svg)](https://asciinema.org/a/fyS3QZIaXW6FmoBLIKPjFWlm7)
+
 ```
 │
 ├── root_ca

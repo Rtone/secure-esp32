@@ -5,6 +5,7 @@
 #include "freertos/event_groups.h"
 #include "esp_log.h"
 #include "wifi.h"
+#include "e2ee.h"
 #include "mqtt_app.h"
 
 esp_err_t taskWifi(void)
@@ -50,13 +51,38 @@ esp_err_t mqttTaskStart(void)
 
     if (retTaskMqttClient == pdPASS)
     {
-        ESP_LOGI("Task", "Https Req task created");
+        ESP_LOGI("Task", "Mqtt app task created");
         // vTaskDelete(wifiHandle);
         return ESP_OK;
     }
     else
     {
-        ESP_LOGI("Task", "Https Req task failed");
+        ESP_LOGI("Task", "Mqtt app task failed");
+        return ESP_FAIL;
+    }
+}
+
+esp_err_t taskEndToEndEnc(void)
+{
+    BaseType_t retTaskEndToEndEnc;
+    // wifiHandle = NULL;
+
+    retTaskEndToEndEnc = xTaskCreate(endToEndEnc,
+                                     "End_to_End_Encryption",
+                                     8192,
+                                     NULL,
+                                     5,
+                                     NULL);
+
+    if (retTaskEndToEndEnc == pdPASS)
+    {
+        ESP_LOGI("Task", "End2End Enc task created");
+        // vTaskDelete(wifiHandle);
+        return ESP_OK;
+    }
+    else
+    {
+        ESP_LOGI("Task", "End2End Enc task failed");
         return ESP_FAIL;
     }
 }

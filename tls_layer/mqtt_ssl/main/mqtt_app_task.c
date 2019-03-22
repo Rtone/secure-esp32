@@ -20,7 +20,7 @@
 #include "esp_log.h"
 #include "tasks.h"
 
-static const char *TAG = "MQTTS_EXAMPLE";
+static const char *TAG = "MQTTS_APP";
 
 static void initialize_nvs()
 {
@@ -54,6 +54,10 @@ void app_main()
 
     ESP_LOGI(TAG, "WIFI");
     ret = taskWifi();
+    ESP_ERROR_CHECK(ret);
+
+    ESP_LOGI(TAG, "End To End Enc");
+    ret = taskEndToEndEnc();
     ESP_ERROR_CHECK(ret);
 
     ESP_LOGI(TAG, "Mqtt client");

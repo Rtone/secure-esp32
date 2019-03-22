@@ -20,7 +20,7 @@
 #include "esp_log.h"
 #include "tasks.h"
 
-static const char *TAG = "MQTTS_EXAMPLE";
+static const char *TAG = "MQTTS_APP";
 
 static void initialize_nvs()
 {

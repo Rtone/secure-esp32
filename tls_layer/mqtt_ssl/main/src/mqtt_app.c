@@ -25,7 +25,7 @@
 #include "e2ee.h"
 #include "mqtt_app.h"
 
-static const char *TAG = "MQTTS_APP";
+static const char *TAG = "MQTTS_APP_TASK";
 
 #if CONFIG_BROKER_CERTIFICATE_OVERRIDDEN == 1
 static const uint8_t ca_cert_pem_start[] = "-----BEGIN CERTIFICATE-----\n" CONFIG_BROKER_CERTIFICATE_OVERRIDE "\n-----END CERTIFICATE-----";
@@ -36,12 +36,41 @@ extern const uint8_t ca_cert_pem_end[] asm("_binary_ca_cert_pem_end");
 
 static void _MqttPublish(esp_mqtt_client_handle_t client)
 {
-    char buffer[32];
+    char buffer[1024];
     static int msg_id;
-    memset(buffer, 0, 32);
-    AESEncrypt("redaidilredaidilredaidilreda", 28, buffer);
-    printf("Hadi bent l9houub %s", buffer);
-    msg_id = esp_mqtt_client_publish(client, "/topic/qos0", buffer, 32, 0, 0);
+    memset(buffer, 0, 1024);
+    char msgID1[] = "FOR";
+    char msgID2[] = "FORBETTER";
+    char msgID3[] = "FORBETTERSECURITY";
+    char msgID4[] = "FORBETTERSECURITYIMPLEMENTATION";
+
+    char msgID5[] = "WITHLOVERIDAIDIL";
+    char msgID6[] = "(AKA.) RIDILX";
+
+    printf("La taille du message sizeof %d\n", sizeof(msgID1));
+
+    AESEncrypt(msgID1, sizeof(msgID1), buffer);
+    msg_id = esp_mqtt_client_publish(client, "/topic/qos0", buffer, ((sizeof(msgID1) / 16) + 1) * 16, 0, 0);
+    ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+
+    AESEncrypt(msgID2, sizeof(msgID2), buffer);
+    msg_id = esp_mqtt_client_publish(client, "/topic/qos0", buffer, ((sizeof(msgID2) / 16) + 1) * 16, 0, 0);
+    ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+
+    AESEncrypt(msgID3, sizeof(msgID3), buffer);
+    msg_id = esp_mqtt_client_publish(client, "/topic/qos0", buffer, ((sizeof(msgID3) / 16) + 1) * 16, 0, 0);
+    ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+
+    AESEncrypt(msgID4, sizeof(msgID4), buffer);
+    msg_id = esp_mqtt_client_publish(client, "/topic/qos0", buffer, ((sizeof(msgID4) / 16) + 1) * 16, 0, 0);
+    ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+
+    AESEncrypt(msgID5, sizeof(msgID5), buffer);
+    msg_id = esp_mqtt_client_publish(client, "/topic/qos0", buffer, ((sizeof(msgID5) / 16) + 1) * 16, 0, 0);
+    ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+
+    AESEncrypt(msgID6, sizeof(msgID6), buffer);
+    msg_id = esp_mqtt_client_publish(client, "/topic/qos0", buffer, ((sizeof(msgID6) / 16) + 1) * 16, 0, 0);
     ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
 }
 
@@ -88,7 +117,7 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
     case MQTT_EVENT_DATA:
         ESP_LOGI(TAG, "MQTT_EVENT_DATA");
         printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
-        printf("DATA=%.*s\r\n", event->data_len, event->data);
+        printf("DATA=\e[31m%.*s\e[0m\r\n", event->data_len, event->data);
         AESDecrypt(event->data, event->data_len);
         break;
 
